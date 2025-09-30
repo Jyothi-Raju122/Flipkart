@@ -159,4 +159,4 @@ project is solely for learning and educational purposes, and any resemblance to 
 businesses, or events is purely coincidental.
 
 
-![ERD Placeholder](https://github.com/najirh/Flipkart--SQL-Project-B01/blob/main/Flipkart%20Project%20Schemas.png)
+![ERD Placeholder](https://github.com/Jyothi-Raju122/Flipkart/blob/main/Flipkart%20Project%20Schemas.png)
