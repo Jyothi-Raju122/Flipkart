@@ -89,17 +89,183 @@ INNER JOIN
 	ON p.product_id = s.product_id;
 ```
 
-2. `Add your questions here`
-3. `Add your questions here`
-4. `Add your questions here`
-5. `Add your questions here`
+2. List all products and show the details of customers who have placed orders for them. Include products that have no orders
+```sql
+SELECT 
+	p.product_id,
+	p.product_name,
+	s.order_date,
+	s.quantity * s.price_per_unit as total_price,
+	c.customer_name
+FROM
+	products as p
+LEFT JOIN 
+	sales as s
+	ON s.product_id = p.product_id
+LEFT JOIN
+	customers as c
+	ON c.customer_id = s.customer_id;
+```
+3. List all orders and their shipping status. Include orders that do not have any shipping records
+```sql
+SELECT *
+FROM
+	sales as s
+LEFT JOIN
+	shippings as sh
+	ON sh.order_id = s.order_id;
+```
+
+4. Retrieve all products, including those with no orders, along with their price.
+```sql
+	SELECT *
+	FROM 
+		products as p
+	LEFT JOIN 
+		sales as s
+		ON s.product_id = p.product_id;
+```
+
+5. Find the total number of completed orders made by customers from the state 'Delhi'
+```sql
+SELECT  
+	s.order_status,
+	c.state,
+	count(*) as total_number_of_completed_orders
+FROM 
+	sales as s
+INNER JOIN 
+	customers as c
+	ON c.customer_id = s.customer_id
+WHERE 
+	s.order_status = 'Completed'
+	AND c.state = 'Delhi'
+GROUP BY 1, 2;
+```
    
 ### Medium to Hard
-1. `Add your questions here`
-2. `Add your questions here`
-3. `Add your questions here`
-4. `Add your questions here`
-5. `Add your questions here`
+1.Find the total quantity of each product ordered by customers from 'Delhi' and only include products with a quantity greater than 5
+```sql
+SELECT DISTINCT
+	s.product_id,
+	p.product_name,
+	c.customer_name,
+	c.state,
+	sum(quantity) as total_quantity
+FROM 
+	sales as s
+INNER JOIN
+	customers as c
+	ON c.customer_id = s.customer_id
+INNER JOIN 
+	products as p
+	ON p.product_id = s.product_id
+WHERE c.state = 'Delhi'
+GROUP BY 1,2,3,4
+HAVING sum(quantity) > 5
+ORDER BY 1,2;
+```
+2. Retrieve the total sales for each product category and only include categories where the total sales exceed 100,000.
+```sql
+SELECT
+	p.category,
+	sum(s.quantity*s.price_per_unit) as total_sales
+FROM
+	sales as s
+INNER JOIN
+	products as p
+	ON p.product_id = s.product_id
+GROUP BY 1
+HAVING sum(s.quantity*s.price_per_unit) > 100000
+ORDER BY 1;
+```
+
+3. Show the number of customers in each state who have made purchases with a total spend greater than 50,000.
+```sql
+SELECT
+	c.state,
+	count(s.customer_id) as number_of_customers,
+	sum(s.quantity*s.price_per_unit)
+FROM 
+	sales as s
+INNER JOIN
+	customers as c
+	ON c.customer_id = s.customer_id
+GROUP BY 1
+HAVING
+	sum(s.quantity*s.price_per_unit) > 50000
+ORDER BY 1;
+```
+
+4. Retrieve the total sales per customer in 'Delhi' where the order status is 'Completed', only include those with total sales greater than 50,000, and order the results by total sales.
+```sql
+SELECT
+	c.customer_name,
+	c.state,
+	SUM(s.quantity*s.price_per_unit)
+FROM
+	sales AS s
+INNER JOIN
+	customers AS c
+	ON c.customer_id = s.customer_id
+WHERE c.state = 'Delhi'
+	  AND s.order_status = 'Completed'
+GROUP BY 1, 2
+HAVING 
+	SUM(s.quantity*s.price_per_unit) > 50000
+ORDER BY 3 ASC;
+```
+5. Show the total quantity sold per product in the 'Accessories' category where the total quantity sold is greater than 50 and order the results by product name
+```sql
+SELECT
+	p.product_name,
+	p.category,
+	sum(s.quantity) as total_quantity_sold
+FROM
+	sales as s
+INNER JOIN
+	products as p
+	ON p.product_id = s.product_id
+WHERE 
+	p.category = 'Accessories'
+GROUP BY 1,2
+HAVING 
+	sum(s.quantity) > 50
+ORDER BY 3 ASC;
+```
+6. Get the number of orders per product and filter to include only products that have been ordered more than 10 times, then order the results by the highest number of orders.
+```sql
+SELECT
+	p.product_name,
+	COUNT(s.order_id)
+FROM
+	sales as s
+INNER JOIN
+	products as p
+	ON p.product_id = s.product_id
+GROUP BY 1
+HAVING 
+	count(s.order_id) > 10
+ORDER BY 2 DESC;
+```
+7. Retrieve the number of payments made per customer where the payment status is 'Payment Successed' and group by customer, ordering by payment count
+```sql
+SELECT 
+	c.customer_name,
+	COUNT(p.payment_id)
+FROM
+	payments as p
+INNER JOIN
+    sales as s
+	ON s.order_id = p.order_id
+INNER JOIN
+	customers as c
+	ON c.customer_id = s.customer_id
+WHERE 
+	p.payment_status = 'Payment Successed'
+GROUP BY 1
+ORDER BY 2;
+```
    
 ---
 
